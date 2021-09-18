@@ -36,7 +36,32 @@ img{
 	object-fit: cover;
 }
 
+/* Nav bar */
+.main-head{
+	background: white;
+	color: black;
+}
 
+nav.main{
+	min-height: 7vh;
+	display: flex;
+	width: 65%;
+	margin: auto; 
+	align-items: center;
+	padding: 0.5rem;
+}
+
+nav.main ul{
+	display: flex;
+	flex: 1 1 40rem;
+	justify-content: space-around;
+	align-items: center;
+	list-style: none;
+}
+
+#logo{
+	flex: 2 1 40rem;
+}
 
 /* -----*/
 
@@ -55,55 +80,21 @@ a{
 	padding-bottom: 20px;
 }
 
-/* NAVIGATION BAR */
-.second-nav{
-	display: flex;
-	padding: 15px 30px;
-}
-
-.second-nav .feed{
-	flex: 1 1 30px;
-}
-
-.second-nav .feed:hover{
-	flex: 1 1 30px;
-	color: grey;
-}
-
-.second-nav .profile{
-	flex: 1 1 30px;
-}
-
-.second-nav .profile:hover{
-	flex: 1 1 30px;
-	color: grey;
-}
-
-.second-nav .new{
-	flex: 6 1 5rem;
-	text-align: right;
-	text-transform: uppercase;
-  	color: #7A9D96;
-}
-
-.second-nav .new:hover{
-	color: grey;
-}
-
-.logout_aling{
-	display: flex;
-	align-items: right;
-	flex-direction: column;
-}
 
 
-/*USername */
 .username{
 	margin-bottom: .2rem;
 }
 
 .username a{
 	font-size: 1.1rem;
+}
+
+
+.logout_aling{
+	display: flex;
+	align-items: right;
+	flex-direction: column;
 }
 
 
@@ -125,8 +116,8 @@ input {
   color: #777B7E;
 }
 input:focus {
-  border-color: #7A9D96;
-  color: #2C3238;
+  border-color: #248bf5;
+  color: #248bf5;
 }
 textarea {
   width: 100%;
@@ -136,12 +127,9 @@ textarea {
   background: #fff;
   padding: 20px 0 4px;
   margin: 0 0 20px;
-  color: #777B7E;
+  color: #248bf5;
 }
-textarea:focus {
-  border-color: #7A9D96;
-  color: #2C3218;
-}
+
 button#submit {
   width: 100%;
   padding: 20px 0;
@@ -154,9 +142,24 @@ button#submit {
   transition: .35s linear;
 }
 
-button#submit:hover {
-  opacity: 1;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* MESSAGE BOXX*/
 /*------------------------------------------------------------------*/
