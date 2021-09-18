@@ -1,0 +1,45 @@
+{% extends 'room/layout.html' %}
+
+{% block content %}
+
+{% load static%}
+
+
+
+            <div>
+                <!-- cajon de mensajes-->
+
+                                
+                <div class="imessage">
+                    
+                    {% for message in messages %}
+                    {% if message.sender == request.user %}
+                    
+                    <p class="from-me"> <b>Tú: </b> <br> {{ message }}</p>
+                    {%else%}
+                    
+                    <p class="from-them"> <b>{{ message.sender|title }} </b> <br> {{ message }}</p>
+
+                    {% endif %}
+                    {% endfor %}
+
+                </div>
+
+                <form id="chat-box" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col s11">
+                            <div class="input-field">
+                                <input id="id_message" name="message" type="text" placeholder="Mensaje..">
+                            </div>
+                        </div>
+                        <div class="col s1" style="line-height: 80px">
+                            <button class="btn btn-floating blue lighten-2 waves-effect waves-light"><i class="material-icons">Enviar</i></button>
+                        </div>
+                    </div>
+                </form>
+                
+
+        </div>
+
+{% endblock %}
