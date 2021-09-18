@@ -15,9 +15,12 @@
 		<nav class="main">
 			<h1 id="logo">Sala de chat</h1>
 			<ul>
-				<li><a href="#">Logout</a></li>
-				<li><a href="#">Register</a></li>
-				<li><a href="#">Login</a></li>
+				{% if request.user.is_authenticated%}
+				<li><a href="{% url 'logout' %}">Logout</a></li>
+				{% else %}
+				<li><a href="{% url 'register' %}">Register</a></li>
+				<li><a href="{% url 'login' %}">Login</a></li>
+				{% endif %}
 			</ul>
 		</nav>
 	</header>

@@ -1,0 +1,16 @@
+{% extends 'room/layout.html' %}
+
+{% block content %}
+
+{% if request.user.is_authenticated%}
+<META HTTP-EQUIV="REFRESH" CONTENT="1; {% url 'room' %} "> 
+{%else%}
+<form class= "form" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" id = "submit">Login</button>
+
+</form>
+{%endif%}
+{% endblock %}

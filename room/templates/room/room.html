@@ -1,36 +1,41 @@
 {% extends 'room/layout.html' %}
 
 {% block content %}
-
-{% load static%}
-
-
+               
+            {% if user.is_authenticated %}
+            <p> Bienvenido '{{ user.username }}'</p>
+            
+            {% else %}
+            <a href="#">Login</a>
+            {% endif %}
+               
 
             <div>
                 <!-- cajon de mensajes-->
+                
+                <div id="board" class="section grey lighten-3" style="height: 60vh; padding: 5px; overflow-y: scroll">
+                    <div class="imessage" id="chat-session" >
+                        
+                        {% for message in messages %}
+                        {% if message.sender == request.user %}
+                        
+                        <p class="from-me"> <b>Tú: </b> <br> {{ message }}</p>
+                        {%else%}
+                        
+                        <p class="from-them"> <b>{{ message.sender|title }} </b> <br> {{ message }}</p>
 
-                                
-                <div class="imessage">
-                    
-                    {% for message in messages %}
-                    {% if message.sender == request.user %}
-                    
-                    <p class="from-me"> <b>Tú: </b> <br> {{ message }}</p>
-                    {%else%}
-                    
-                    <p class="from-them"> <b>{{ message.sender|title }} </b> <br> {{ message }}</p>
+                        {% endif %}
+                        {% endfor %}
 
-                    {% endif %}
-                    {% endfor %}
-
+                    </div>
                 </div>
-
-                <form id="chat-box" method="post">
-                    {% csrf_token %}
+                {% load static %}
+                <form id="chat-box" method="post">{% csrf_token %}
                     <div class="row">
                         <div class="col s11">
                             <div class="input-field">
                                 <input id="id_message" name="message" type="text" placeholder="Mensaje..">
+                                <input type='hidden' id="id_sender" name="sender" type="text" placeholder="Mensaje.." value="{{ user.id }}">
                             </div>
                         </div>
                         <div class="col s1" style="line-height: 80px">
@@ -38,8 +43,39 @@
                         </div>
                     </div>
                 </form>
-                
 
-        </div>
+
+            </div>
+
+
+
+                {% load staticfiles %}
+                <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+                <script src="{% static 'js/chat.js' %}"></script>
+                <script>
+                   
+                    var current_msj = '{{ messages }}';
+                    //'{{ messages }}';
+                    $(function () {
+                        //scrolltoend();
+                        console.log("Paso Recibiendo");  
+                        receive(current_msj );
+                        setInterval(receive,1000)
+                    })
+                    //For sending
+                    $(function () {
+                        scrolltoend(); 
+                        $('#chat-box').on('submit', function (event) {
+                            console.log("Presionado");
+                            event.preventDefault();
+                            var message = $('#id_message');
+                            
+                            send('{{ request.user.username }}',  message.val());
+                            
+                        })
+                    })
+                </script>
+
+
 
 {% endblock %}
