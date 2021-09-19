@@ -7,6 +7,7 @@ from .serializer import MessageSerializer
 from .forms import UserRegisterForm
 from django.contrib.auth.forms import UserCreationForm
 
+
 from django.http import JsonResponse
 import json
 
@@ -14,6 +15,13 @@ def room(request):
     messages =  Message.objects.all()
     context = {'users': User.objects.exclude(username=request.user.username), "messages":messages}
     return render(request , 'room/room.html', context)
+
+def mensages(request):
+    print("")
+    print("CARGANDO")
+    messages =  Message.objects.all()
+    context = {'users': User.objects.exclude(username=request.user.username), "messages":messages}
+    return render(request , 'room/mensages.html', context)
 
 def register(request):
     if request.method == 'POST':
@@ -28,6 +36,7 @@ def register(request):
     return render(request, 'room/register.html',context)
 
 
+
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
@@ -39,7 +48,13 @@ class MessageViewSet(viewsets.ModelViewSet):
         return JsonResponse(datos)
 
     def post (self,request):
-        jd= json.loads(request.body)
+        
         datos = {"messages":"sucess"}
-        #Message.objects.create(message = jd['message', sender=jd['sender']])
         return JsonResponse(datos)
+
+    def delete(self,request,id):
+        messages =  list(Message.objects.all())
+        if len(messages)>0:
+            Message.objects.filter(id=id).delete
+        else:
+            datos= {'message':'Mensaje no encontrado'}

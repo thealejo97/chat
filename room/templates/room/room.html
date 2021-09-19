@@ -1,81 +1,124 @@
 {% extends 'room/layout.html' %}
 
 {% block content %}
-               
-            {% if user.is_authenticated %}
-            <p> Bienvenido '{{ user.username }}'</p>
+
+<div class="row">
+    
+    <div class="col s2">
+        <h2 class="title">En Linea {{request.user|title}}  🟢</h2>
+        <h2 class="title">Usuarios en la sala </h2>
+            <div class="card">
+                <div class="collection">
+                    {% for user in users %}
+                    
+                        <div class="col s8">
+                            <h3 class="title" style="font-weight: 500">{{ user.username|title }}</h3>
+                            <h6>Ult. Vez {{ user.last_login}}</h6>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+    </div>
+    <div class="col s9">
+        <div>
+            <!-- cajon de mensajes-->
             
-            {% else %}
-            <a href="#">Login</a>
-            {% endif %}
-               
-
-            <div>
-                <!-- cajon de mensajes-->
-                
-                <div id="board" class="section grey lighten-3" style="height: 60vh; padding: 5px; overflow-y: scroll">
-                    <div class="imessage" id="chat-session" >
+            <div id="board" class="section grey lighten-3" style="height: 60vh; padding: 5px; overflow-y: scroll">
+                <div id="oculto" style="display: none;"></div>
+                <div class="imessage" id="chat-session" >
+                    
+                    {% for message in messages %}
+                    {% if message.sender == request.user %}
+                    
+                    <div id= '{{  message.id }}' style="align-self: flex-end;"  data-time = '{{ message.timestamp|date:"M d Y  H:i:s:u"  }}'>
+                        <p class="from-me"   > <a onclick= 'delete_msj("{{  message.id }}")'>x</a> <br>{{ message.timestamp}} <br><b >Tú: </b> <br> {{ message }}</p>
+                        <input type='hidden' id="id_message_delete" name="id_message_delete" type="text" value="{{ message.id }}">
                         
-                        {% for message in messages %}
-                        {% if message.sender == request.user %}
-                        
-                        <p class="from-me"> <b>Tú: </b> <br> {{ message }}</p>
-                        {%else%}
-                        
-                        <p class="from-them"> <b>{{ message.sender|title }} </b> <br> {{ message }}</p>
+                    </div>
+                    {% if message.image %}
+                        <div><img class="image_mensage_rigth" src="{{message.image.url }}"></div>
+                    {%endif%}
+                    
+                    
+                    
+                    {%else%}
 
-                        {% endif %}
-                        {% endfor %}
+                    <div id= '{{  message.id }}'  data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'>
+        
+                        <p class="from-them"> <b>{{ message.sender|title }} </b> <br>{{ message.timestamp}}<br> {{ message }}</p>
+                    </div>
+                    
+                    {% if message.image %}
+                        <div data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'><img class="image_mensage_left" src="{{message.image.url }}"></div>
+                    {%endif%}
 
+                    {% endif %}
+                    {% endfor %}
+                    
+                </div>
+            </div>
+            {% load static %}
+            <form id="chat-box" method="post" enctype='multipart/form-data'>{% csrf_token %}
+                <div class="row">
+                    <div class="col s11">
+                        <div class="input-field">
+                            <input id="id_message" name="message" type="text" placeholder="Mensaje..">
+                            <input type='hidden' id="id_sender" name="sender" type="text" placeholder="Mensaje.." value="{{ user.id }}">
+                            <input type="file" id="image" name="image" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="col s1" style="line-height: 80px">
+                        <button class="btn btn-floating blue lighten-2 waves-effect waves-light"><i class="material-icons">Enviar</i></button>
                     </div>
                 </div>
-                {% load static %}
-                <form id="chat-box" method="post">{% csrf_token %}
-                    <div class="row">
-                        <div class="col s11">
-                            <div class="input-field">
-                                <input id="id_message" name="message" type="text" placeholder="Mensaje..">
-                                <input type='hidden' id="id_sender" name="sender" type="text" placeholder="Mensaje.." value="{{ user.id }}">
-                            </div>
-                        </div>
-                        <div class="col s1" style="line-height: 80px">
-                            <button class="btn btn-floating blue lighten-2 waves-effect waves-light"><i class="material-icons">Enviar</i></button>
-                        </div>
-                    </div>
-                </form>
+            </form>
 
 
-            </div>
+        </div>
+
+    </div>
+</div>
 
 
 
-                {% load staticfiles %}
-                <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-                <script src="{% static 'js/chat.js' %}"></script>
-                <script>
-                   
-                    var current_msj = '{{ messages }}';
-                    //'{{ messages }}';
-                    $(function () {
-                        //scrolltoend();
-                        console.log("Paso Recibiendo");  
-                        receive(current_msj );
-                        setInterval(receive,1000)
-                    })
-                    //For sending
-                    $(function () {
-                        scrolltoend(); 
-                        $('#chat-box').on('submit', function (event) {
-                            console.log("Presionado");
-                            event.preventDefault();
-                            var message = $('#id_message');
-                            
-                            send('{{ request.user.username }}',  message.val());
-                            
-                        })
-                    })
-                </script>
+{% load staticfiles %}
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="{% static 'js/chat.js' %}"></script>
+<script>
+    
+    var current_msj = '{{ messages }}';
+    setInterval('receiveDeamon()',1000);
 
+    $(function () {
+        scrolltoend(); 
+        $('#chat-box').on('submit', function (event) {
+            console.log("Presionado");
+            event.preventDefault();
+            var path = $('id_message').val();
+            var message = $('#id_message');
+            var image = $('#image');
+
+            send('{{ request.user.username }}',  message.val(), image.val());
+            
+        });
+      
+    })
+
+    $(function () {
+      // Borrar
+      $('#deletex').on('submit', function (event) {
+            console.log("Presionado borrado");
+
+            event.preventDefault();
+            // event.preventDefault();
+            // var id_message_delete = $('id_message_delete').val();            
+            // delete_msj(id_message_delete);
+            
+        });
+      
+    })
+
+</script>
 
 
 {% endblock %}

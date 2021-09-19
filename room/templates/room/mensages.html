@@ -1,0 +1,33 @@
+{% block msjcontent %}
+
+<div id="oculto" style="display: none;"></div>
+
+<div class="imessage" id="chat-session" >
+    {% for message in messages %}
+    {% if message.sender == request.user %}
+    
+    <div id= '{{  message.id }}' style="align-self: flex-end;" data-time = '{{ message.timestamp|date:"M d Y  H:i:s:u"  }}'>
+        <p class="from-me"   > <a onclick= 'delete_msj("{{  message.id }}")'>x</a><br>{{ message.timestamp}} <br> <b >Tú: </b> <br> {{ message }}</p>
+        <input type='hidden' id="id_message_delete" name="id_message_delete" type="text" value="{{ message.id }}">
+        
+    </div>
+    {% if message.image %}
+        <div><img class="image_mensage_rigth" src="{{message.image.url }}"></div>
+    {%endif%}
+    
+    
+    
+    {%else%}
+    <div id= '{{  message.id }}'  data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'>
+        
+        <p class="from-them"> <b>{{ message.sender|title }} </b> <br>{{ message.timestamp}}<br> {{ message }}</p>
+    </div>
+    {% if message.image %}
+        <div  data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'><img class="image_mensage_left" src="{{message.image.url }}"></div>
+    {%endif%}
+
+    {% endif %}
+    {% endfor %}
+    
+</div>
+{% endblock msjcontent %}
