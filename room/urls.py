@@ -16,7 +16,6 @@ urlpatterns = [
     path('/room', views.room , name='room'),
     path('api/', include(router.urls)),
     path('api/<str:idusu/<str:msg>', include(router.urls),name="apiGetMsg"),
-    path('api/', include(router.urls),name="apiGetLastMsg"),
     path('register/',views.register, name ='register'),
     path('',LoginView.as_view(template_name="room/login.html"), name ='login'),
     path('logout/',LogoutView.as_view(template_name="room/logout.html"), name ='logout'),

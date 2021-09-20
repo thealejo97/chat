@@ -1,10 +1,11 @@
-{% extends 'room/layout.html' %}
+{% extends 'room/layout.html' %}<!-- importamos el header -->
 
 {% block content %}
 
 {% if request.user.is_authenticated%}
-<META HTTP-EQUIV="REFRESH" CONTENT="1; {% url 'room' %} "> 
+<META HTTP-EQUIV="REFRESH" CONTENT="1; {% url 'room' %} "> <!-- si el usuario se ha autenticado redirige al template room -->
 {%else%}
+<!-- si el usuario NO se ha autenticado pide los datos de inicio de sesion-->
 <form class= "form" method="post">
     {% csrf_token %}
     {{ form.as_p }}

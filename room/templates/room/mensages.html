@@ -1,33 +1,35 @@
 {% block msjcontent %}
-
-<div id="oculto" style="display: none;"></div>
-
+<!-- Template que tiene los chats en caso de que haya un mensaje nuevo realiza lo mismo que el del room original solo que se
+recarga cuando se ejecuta atraves del JS-->
 <div class="imessage" id="chat-session" >
+
     {% for message in messages %}
     {% if message.sender == request.user %}
-    
-    <div id= '{{  message.id }}' style="align-self: flex-end;" data-time = '{{ message.timestamp|date:"M d Y  H:i:s:u"  }}'>
-        <p class="from-me"   > <a onclick= 'delete_msj("{{  message.id }}")'>x</a><br>{{ message.timestamp}} <br> <b >Tú: </b> <br> {{ message }}</p>
+    <!--  MENSAJE, SI FUE ENVIADO POR MI, SE ALINEA A LA DERECHA  -->
+    <div id= '{{  message.id }}' style="align-self: flex-end;"  data-time = '{{ message.timestamp|date:"M d Y  H:i:s:u"  }}'>
+        <!-- NOTAR QUE EN EL ONCLICK DE LA X UTILIZO EL DELETE MSJ QUE EJECUTA EL JS PARA USAR EL API-->
+        <p class="from-me"   > <a onclick= 'delete_msj("{{  message.id }}")'>x</a> <br>{{ message.timestamp}} <br><b >Tú: </b> <br> {{ message }}</p>
         <input type='hidden' id="id_message_delete" name="id_message_delete" type="text" value="{{ message.id }}">
-        
     </div>
+
     {% if message.image %}
-        <div><img class="image_mensage_rigth" src="{{message.image.url }}"></div>
+    <!--  MULTIMEDIA  -->
+    <div  data-time = '{{ message.timestamp|date:"M d Y  H:i:s:u"  }}'>
+        <img class="image_mensage_rigth" src="{{message.image.url }}" >
+    </div>
     {%endif%}
-    
-    
-    
     {%else%}
+    <!--  MENSAJE, SI FUE ENVIADO POR OTRO USUARIO, SE ALINEA A LA IZQUIERDA  -->
     <div id= '{{  message.id }}'  data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'>
-        
         <p class="from-them"> <b>{{ message.sender|title }} </b> <br>{{ message.timestamp}}<br> {{ message }}</p>
     </div>
     {% if message.image %}
-        <div  data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'><img class="image_mensage_left" src="{{message.image.url }}"></div>
+    <!--  MULTIMEDIA  -->
+    <div data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'>
+        <img class="image_mensage_left" src="{{message.image.url }}">
+    </div>
     {%endif%}
-
     {% endif %}
     {% endfor %}
-    
 </div>
 {% endblock msjcontent %}

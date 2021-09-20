@@ -1,19 +1,23 @@
-{% extends 'room/layout.html' %}
+{% extends 'room/layout.html' %}<!-- importamos el header -->
 
 {% block content %}
 
 <div class="row">
     <!-- DIV LATERAL CON USUARIOS REGISTRADOS-->
     <div class="col s2">
-        <h2 class="title">En Linea {{request.user|title}}  🟢</h2>
+        <h2 class="title">En Linea {{request.user|title}}</h2>
         <h2 class="title">Usuarios en la sala </h2>
             <div class="card">
                 <div class="collection">
                     {% for user in users %}
-                    
                         <div class="col s8">
-                            <h3 class="title" style="font-weight: 500">{{ user.username|title }}</h3>
+                            <h3 class="title" style="font-weight: 500">{{ user.username|title }}
+                            {% if request.user.id == user.id  %}
+                            🟢
+                            </h3>
+                            {%else%}
                             <h6>Ult. Vez {{ user.last_login}}</h6>
+                            {%endif%}
                         </div>
                     {% endfor %}
                 </div>
@@ -22,9 +26,9 @@
     <!-- DIV CON MENSAJES -->
     <div class="col s9">
         <div>
-
+            <!-- el div board contiene todos los mensajes en la clase imessage -->
             <div id="board" class="section grey lighten-3" style="height: 60vh; padding: 5px; overflow-y: scroll">
-                <div id="oculto" style="display: none;"></div>
+                
                 <div class="imessage" id="chat-session" >
 
                     {% for message in messages %}
@@ -38,8 +42,8 @@
 
                     {% if message.image %}
                     <!--  MULTIMEDIA  -->
-                    <div>
-                        <img class="image_mensage_rigth" src="{{message.image.url }}">
+                    <div  data-time = '{{ message.timestamp|date:"M d Y  H:i:s:u"  }}'>
+                        <img class="image_mensage_rigth" src="{{message.image.url }}" >
                     </div>
                     {%endif%}
                     {%else%}

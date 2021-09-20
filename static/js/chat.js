@@ -35,13 +35,12 @@ function send(sender, message){//ENVIA EL MENSAJE ATRAVEZ DEL API METODO POST
         // console.log(request.response);
     }
 
-    var box = text_box.replace('{sender}', "You");
+    var box = text_box.replace('{sender}', "You"); //Se crea un minitemplate, con la informacion del msj que se acabo de enviar a la bd
         box = box.replace('{message}', message);
         box = box.replace('{message.id}', "Last_created");
-        
-        $('#board').append(box);
-        scrolltoend();
-    document.getElementById("id_message").value = "";
+        $('#board').append(box);// Le añado el template box al board de chats
+        scrolltoend();//Bajar al fondo
+    document.getElementById("id_message").value = "";//Seteo el mensaje y la imagen a vacio
     document.getElementById("image").value = "";
 }
 
@@ -54,27 +53,23 @@ function scrolltoend() {
 
 
 function delete_msj(id){
-    console.log("Elimi")
-    console.log(id);
-    const formData = new FormData();
-    formData.append('id', id);
+    const formData = new FormData();//Elimino 
+    formData.append('id', id); //Creo un form data con el id
 
-    fetch("/api/message/"+id,{
+    fetch("/api/message/"+id,{ // Ejecuto el api con un fetch
         method:"DELETE",
         body: formData,
         headers :{
              "X-CSRFToken": getCookie('csrftoken'),
         }
         })
-        
         window.alert("Mensaje eliminado");
-        updateBoard();
-        
+        updateBoard(); //Actualizo el board de chat
 }
 
 
 function updateBoard(){
-    $('#board').load('mensages');
+    $('#board').load('mensages');// Recargo el board con el template messages
 }
 
 function receiveDeamon(){
@@ -83,10 +78,12 @@ function receiveDeamon(){
     const myElement = document.getElementById('chat-session');
     var last_msg=myElement.children[myElement.children.length -1].dataset.time;//SACO LA FECHA DE CRACION DEL ULTIMO MENSAJE EN TEMPLATE ACTUAL
     var date_ultimo_pantalla = new Date(last_msg.substr(0, 21));// LO  CONVIERTO A FECHA, ENTONCES TENEMOS LA FECHA CON HORA DEL ULTIMO MENSAJE
+    
+    var url = "http://"+location.host+'/api/message';//Saco la url del api
     //REALIZO CONSULTA AL API REST DE LOS MENSAJES
     $.ajax({
         type: 'GET',
-        url: 'http://localhost:1900/api/message',
+        url: url,
         success: function(res){//RESPUESTA DEL API
             var consultMaxTime = res[res.length-1].timestamp //SACO EL TIEMPO DEL ULTIMO MENSAJE CREADO EN LA BD
             var  date_ultimo_servidor= new Date(consultMaxTime.substr(0, 19));// CONVIERTO A TIEMPO
