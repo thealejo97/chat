@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="row">
-    
+    <!-- DIV LATERAL CON USUARIOS REGISTRADOS-->
     <div class="col s2">
         <h2 class="title">En Linea {{request.user|title}}  🟢</h2>
         <h2 class="title">Usuarios en la sala </h2>
@@ -19,45 +19,46 @@
                 </div>
             </div>
     </div>
+    <!-- DIV CON MENSAJES -->
     <div class="col s9">
         <div>
-            <!-- cajon de mensajes-->
-            
+
             <div id="board" class="section grey lighten-3" style="height: 60vh; padding: 5px; overflow-y: scroll">
                 <div id="oculto" style="display: none;"></div>
                 <div class="imessage" id="chat-session" >
-                    
+
                     {% for message in messages %}
                     {% if message.sender == request.user %}
-                    
+                    <!--  MENSAJE, SI FUE ENVIADO POR MI, SE ALINEA A LA DERECHA  -->
                     <div id= '{{  message.id }}' style="align-self: flex-end;"  data-time = '{{ message.timestamp|date:"M d Y  H:i:s:u"  }}'>
+                        <!-- NOTAR QUE EN EL ONCLICK DE LA X UTILIZO EL DELETE MSJ QUE EJECUTA EL JS PARA USAR EL API-->
                         <p class="from-me"   > <a onclick= 'delete_msj("{{  message.id }}")'>x</a> <br>{{ message.timestamp}} <br><b >Tú: </b> <br> {{ message }}</p>
                         <input type='hidden' id="id_message_delete" name="id_message_delete" type="text" value="{{ message.id }}">
-                        
                     </div>
-                    {% if message.image %}
-                        <div><img class="image_mensage_rigth" src="{{message.image.url }}"></div>
-                    {%endif%}
-                    
-                    
-                    
-                    {%else%}
 
+                    {% if message.image %}
+                    <!--  MULTIMEDIA  -->
+                    <div>
+                        <img class="image_mensage_rigth" src="{{message.image.url }}">
+                    </div>
+                    {%endif%}
+                    {%else%}
+                    <!--  MENSAJE, SI FUE ENVIADO POR OTRO USUARIO, SE ALINEA A LA IZQUIERDA  -->
                     <div id= '{{  message.id }}'  data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'>
-        
                         <p class="from-them"> <b>{{ message.sender|title }} </b> <br>{{ message.timestamp}}<br> {{ message }}</p>
                     </div>
-                    
                     {% if message.image %}
-                        <div data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'><img class="image_mensage_left" src="{{message.image.url }}"></div>
+                    <!--  MULTIMEDIA  -->
+                    <div data-time='{{ message.timestamp|date:"M d Y  H:i:s:u"}}'>
+                        <img class="image_mensage_left" src="{{message.image.url }}">
+                    </div>
                     {%endif%}
-
                     {% endif %}
                     {% endfor %}
-                    
                 </div>
             </div>
             {% load static %}
+            <!--  CAJA DE TEXTO FORMULARIO  -->
             <form id="chat-box" method="post" enctype='multipart/form-data'>{% csrf_token %}
                 <div class="row">
                     <div class="col s11">
@@ -85,35 +86,17 @@
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="{% static 'js/chat.js' %}"></script>
 <script>
-    
-    var current_msj = '{{ messages }}';
+    //JAVA SCRIP PARA EL USO DE LAS APIS
+    //DEAMON QUE SE ENCARGA DE VALIDAR CADA Segundo si hay mensajes nuevos
     setInterval('receiveDeamon()',1000);
 
     $(function () {
-        scrolltoend(); 
+        scrolltoend();//AUTOMATICAMENTE SCROLL HASTA EL FONDO
         $('#chat-box').on('submit', function (event) {
-            console.log("Presionado");
             event.preventDefault();
             var path = $('id_message').val();
             var message = $('#id_message');
-            var image = $('#image');
-
-            send('{{ request.user.username }}',  message.val(), image.val());
-            
-        });
-      
-    })
-
-    $(function () {
-      // Borrar
-      $('#deletex').on('submit', function (event) {
-            console.log("Presionado borrado");
-
-            event.preventDefault();
-            // event.preventDefault();
-            // var id_message_delete = $('id_message_delete').val();            
-            // delete_msj(id_message_delete);
-            
+            send('{{ request.user.username }}',  message.val()); //EJECUTO EL ENVIO QUE SE CONECTA A LA API
         });
       
     })

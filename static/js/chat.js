@@ -21,24 +21,18 @@ function getCookie(name) {
 
 
 
-function send(sender, message,image){
-    console.log(sender);
-    console.log(message);
-    
-    var form = new FormData(document.getElementById('chat-box'));
-    var imageURL = $('#image').val();
+function send(sender, message){//ENVIA EL MENSAJE ATRAVEZ DEL API METODO POST
+    var form = new FormData(document.getElementById('chat-box')); //SACO EL FORM DEL HTML CHATBOX
+    var imageURL = $('#image').val();//SACAMOS LA IMAGEN QUE SE ESTA CARGANDO (NULL SI VACIO)
 
-    console.log(imageURL);
-    
-    const request = new XMLHttpRequest();
-    request.open("POST","/api/message/");
-    request.setRequestHeader("X-CSRFToken", getCookie('csrftoken')); 
-    
-    request.send(form);
+    const request = new XMLHttpRequest();//CREO EL REQUEST
+    request.open("POST","/api/message/");//POST AL API MESSAGE
+    request.setRequestHeader("X-CSRFToken", getCookie('csrftoken')); // AÑADO EL CSRFTOKEN
+    request.send(form);//EJECUTO EL SEND DEL FORM
     request.onload = ()=>{
-        console.log("request");
-        console.log(request);
-        console.log(request.response);
+        // console.log("request");
+        // console.log(request);
+        // console.log(request.response);
     }
 
     var box = text_box.replace('{sender}', "You");
@@ -74,6 +68,7 @@ function delete_msj(id){
         })
         
         window.alert("Mensaje eliminado");
+        updateBoard();
         
 }
 
